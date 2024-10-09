@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profiles Flexbox</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+            height: 100vh;
+        }
+        .container {
+            width: 90%; 
+            max-width: 800px; 
+            background: white; 
+            padding: 20px;
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px
+            justify-content: center;
+        }
+        .user-card {
+            background: white;
+            border-radius: 5px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex: 1 1 250px; 
+            opacity: 0;
+            transform: translateY(20px); 
+            animation: fadeIn 0.5s forwards; 
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center;
+        }
+        .user-card:hover {
+            transform: translateY(-5px);
+        }
+        .name {
+            font-weight: bold;
+            color: #555;
+            text-align: center; 
+        }
+        .email {
+            color: #777;
+            text-align: center;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .nav-button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .nav-button:hover {
+            background-color: darkred;
+        }
+        img {
+            max-width: 100%;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        a {
+            text-decoration: none;
+            color: #3498db;
+            font-size: 24px;
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            animation: slideIn 0.5s forwards; 
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0); 
+            }
+        }
+        a:hover {
+            color: #1abc9c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <a href="./index.html">____Task0____ <br>__ clickHere ___</a>
+        </div>
+        <h1>User Profiles Flexbox</h1>
+        <div class="flex-container" id="userGrid"></div>
+    </div>
+
+    <script>
+        const URL = "https://randomuser.me/api/?results=10"; 
+        let usersArray = [];
+        let currentIndex = 0;
+
+        function fetchData() {
+            fetch(URL)
+                .then(response => response.json())
+                .then(data => {
+                    usersArray = data.results; 
+                    createUserCard(currentIndex); 
+                });
+        }
+
+        function createUserCard(index) {
+            const userGrid = document.getElementById('userGrid');
+            userGrid.innerHTML = ''; // Clear existing user
+
+            if (usersArray.length === 0) return; // Guard against empty array
+
+            const user = usersArray[index];
+            const userCard = document.createElement("div");
+            userCard.className = "user-card";
+            
+            const nameText = document.createElement("div");
+            nameText.className = "name";
+            nameText.innerText = `${user.name.title} ${user.name.first} ${user.name.last}`; // Full name
+
+            const emailText = document.createElement("div");
+            emailText.className = "email";
+            emailText.innerText = user.email;
+            const locationText = document.createElement("div");
+            locationText.innerText = `${user.location.city}, ${user.location.state}, ${user.location.country}`; // Display location
+
+            const picture = document.createElement("img");
+            picture.src = user.picture.large; 
+            picture.alt = "Profile picture of " + user.name.first;
+
+            const buttonContainer = document.createElement("div");
+            buttonContainer.className = "button-container";
+
+            const previousButton = document.createElement("button");
+            previousButton.innerText = "Previous";
+            previousButton.className = "nav-button";
+            previousButton.onclick = function () {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    createUserCard(currentIndex);
+                }
+            };
+
+            const nextButton = document.createElement("button");
+            nextButton.innerText = "Next";
+            nextButton.className = "nav-button";
+            nextButton.onclick = function () {
+                if (currentIndex < usersArray.length - 1) {
+                    currentIndex++;
+                    createUserCard(currentIndex);
+                }
+            };
+
+            buttonContainer.appendChild(previousButton);
+            buttonContainer.appendChild(nextButton);
+
+            userCard.appendChild(picture);
+            userCard.appendChild(nameText);
+            userCard.appendChild(emailText);
+            userCard.appendChild(locationText);
+            userCard.appendChild(buttonContainer);
+            userGrid.appendChild(userCard);
+        }
+
+        fetchData();
+    </script>
+</body>
+</html>

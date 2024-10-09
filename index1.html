@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotes Grid</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .quote-card {
+            background: white;
+            border-radius: 5px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s, opacity 0.5s;
+        }
+        .quote {
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        .author {
+            text-align: right;
+            font-weight: bold;
+        }
+        .id {
+            font-weight: bold;
+            color: #555;
+        }
+        .delete-button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .delete-button:hover {
+            background-color: darkred;
+        }
+        .slide-out {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+
+        a {
+            text-decoration: none;
+            color: #3498db;
+            font-size: 24px;
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #e74c3c;
+            animation: bounce 0.5s;
+        }
+
+        a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: #3498db;
+            left: 0;
+            bottom: -5px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        a:hover::after {
+            transform: translateX(0);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <a href="./index2.html">____Task2____ <br>__ clickHere ___</a>
+    </div>
+    <h1>Quotes USing Grid</h1>
+    <div class="grid" id="quoteGrid"></div>
+
+    <script>
+        const URL = "https://dummyjson.com/quotes";
+        let quotesArray = [];
+
+        function fetchData() {
+            fetch(URL)
+                .then(response => response.json())
+                .then(data => {
+                    quotesArray = data.quotes;
+                    createGrid(quotesArray);
+                });
+        }
+
+        function createGrid(arr) {
+            const quoteGrid = document.getElementById('quoteGrid');
+            quoteGrid.innerHTML = '';
+            arr.forEach((obj, index) => {
+                const quoteCard = document.createElement("div");
+                quoteCard.className = "quote-card";
+                
+                const idText = document.createElement("div");
+                idText.className = "id";
+                idText.innerText = `ID: ${index + 1}`;
+                const quoteText = document.createElement("div");
+                quoteText.className = "quote";
+                quoteText.innerText = `"${obj.quote}"`;
+
+                const authorText = document.createElement("div");
+                authorText.className = "author";
+                authorText.innerText = `— ${obj.author}`;
+
+                const deleteButton = document.createElement("button");
+                deleteButton.innerText = "Delete";
+                deleteButton.className = "delete-button";
+                deleteButton.onclick = function () {
+                    quoteCard.classList.add('slide-out');
+                    setTimeout(() => {
+                        const newQuotesArray = [];
+                        for (let i = 0; i < quotesArray.length; i++) {
+                            if (i !== index) { 
+                                newQuotesArray.push(quotesArray[i]);
+                            }
+                        }
+                        quotesArray = newQuotesArray;
+                        createGrid(quotesArray);
+                    }, 500);
+                };
+                
+        //     setTimeout(() => {
+        //         quotesArray.splice(index, 1);
+        //         createGrid(quotesArray);
+        //     }, 500);
+        // };
+
+                quoteCard.appendChild(idText);
+                quoteCard.appendChild(quoteText);
+                quoteCard.appendChild(authorText);
+                quoteCard.appendChild(deleteButton);
+                quoteGrid.appendChild(quoteCard);
+            });
+        }
+
+        fetchData();
+    </script>
+
+</body>
+</html>
